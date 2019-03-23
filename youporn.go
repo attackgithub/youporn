@@ -11,7 +11,7 @@ import (
 )
 
 const apiURL = "http://www.youporn.com/api/webmasters/"
-const APITimeout = 3
+const APITimeout = 5
 
 func SearchVideos(search string) YoupornSearchResult {
 	timeout := time.Duration(APITimeout * time.Second)
@@ -23,29 +23,37 @@ func SearchVideos(search string) YoupornSearchResult {
 	var result YoupornSearchResult
 	err := json.Unmarshal(b, &result)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 	return result
 }
 
 func GetVideoByID(ID string) YoupornSingleVideo {
-	resp, _ := http.Get(fmt.Sprintf(apiURL+"video_by_id/?video_id=%s", ID))
+	timeout := time.Duration(APITimeout * time.Second)
+	client := http.Client{
+		Timeout: timeout,
+	}
+	resp, _ := client.Get(fmt.Sprintf(apiURL+"video_by_id/?video_id=%s", ID))
 	b, _ := ioutil.ReadAll(resp.Body)
 	var result YoupornSingleVideo
 	err := json.Unmarshal(b, &result)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 	return result
 }
 
 func GetVideoEmbedCode(ID string) YoupornEmbedCode {
-	resp, _ := http.Get(fmt.Sprintf(apiURL+"video_embed_code/?video_id=%s", ID))
+	timeout := time.Duration(APITimeout * time.Second)
+	client := http.Client{
+		Timeout: timeout,
+	}
+	resp, _ := client.Get(fmt.Sprintf(apiURL+"video_embed_code/?video_id=%s", ID))
 	b, _ := ioutil.ReadAll(resp.Body)
 	var result YoupornEmbedCode
 	err := json.Unmarshal(b, &result)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 	return result
 }
